@@ -47,9 +47,17 @@ describe 'tests de xunit' do
     expect(resultado.failed_tests).to eq([])
   end
 
-  it 'Ejecutar todos los tests de una clase que fall' do
+  it 'Ejecutar todos los tests de una clase que falla' do
     runner = XUnitRunner.new
     resultado = runner.run_all_tests(TestFallaTestSuite)
+    expect(resultado.all_passed?).to be(false)
+    expect(resultado.failed_tests).to eq([:test_falla_suma])
+    expect(resultado.errorred_tests).to eq([])
+  end
+
+  it 'Ejecutar todos los tests de una clase que falla y reportar' do
+    runner = XUnitRunner.new
+    resultado = runner.run_all_and_report(TestFallaTestSuite)
     expect(resultado.all_passed?).to be(false)
     expect(resultado.failed_tests).to eq([:test_falla_suma])
     expect(resultado.errorred_tests).to eq([])
@@ -61,6 +69,13 @@ describe 'tests de xunit' do
     resultado = runner.run_all_tests(TestConBefore)
     expect(resultado.errorred_tests.size).to eq(0)
     expect(resultado.all_passed?).to eq(true)
+  end
+
+  it 'Ejecutar clase combinada con reporter' do
+    runner = XUnitRunner.new
+    resultado = runner.run_all_and_report(TestCombinadoSuite)
+    expect(resultado.errorred_tests.size).to eq(1)
+    expect(resultado.all_passed?).to eq(false)
   end
 
   it 'testear con parametros' do

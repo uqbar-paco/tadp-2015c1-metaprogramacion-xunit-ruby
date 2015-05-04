@@ -36,6 +36,20 @@ class TestFallaTestSuite
   end
 end
 
+class TestCombinadoSuite
+  def test_falso_es_falso
+    assert_false false
+  end
+
+  def test_falla_multiplicacion
+    assert_equals 4, (2*4)
+  end
+
+  def test_error_division
+    assert_true 3/0
+  end
+end
+
 class TestConBefore
 
   attr_accessor :numero

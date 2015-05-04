@@ -1,3 +1,6 @@
+require_relative 'reporter'
+require_relative 'assertions'
+
 class XUnitRunner
   def run_test(klass, sym)
     instancia = klass.new
@@ -55,23 +58,18 @@ class XUnitRunner
       self.run_test(klass, test_method)
     end
 
-    resultado_suite = ResultadoSuite.new resultados
-    Reporter.new(resultado_suite).reportar
+    ResultadoSuite.new resultados
+  end
+
+  def run_all_and_report(klass)
+    reporter = ConsoleReporter.new
+    reporter.start_timer
+    resultado_suite = self.run_all_tests klass
+    reporter.end_timer
+    reporter.reportar resultado_suite
     resultado_suite
   end
 
-end
-
-module Assertions
-  def assert_true(value)
-    unless (value == true)
-      raise AssertionException
-    end
-  end
-
-  def assert_equals(expected, value)
-    self.assert_true (expected == value)
-  end
 end
 
 class AssertionException < Exception
@@ -139,6 +137,9 @@ class Resultado
   def error?
     false
   end
+
+  def report
+  end
 end
 
 class ResultadoSuccess < Resultado
@@ -161,9 +162,18 @@ class ResultadoError < Resultado
   end
 end
 
-class Reporter
-  def reportar
+class ResultadoConsoleFailure < ResultadoFailure
+  def report
+    puts "Failure on test #{self.signature}: #{self.exception.message}".colorize(:color => :light_yellow, :background=> :black)
+  end
 
+end
+
+class ResultadoConsoleError < ResultadoError
+  def report
+    puts "Error on test #{self.signature}: #{self.exception.message}".colorize(:color => :red, :background=> :black)
+    puts self.exception.backtrace.join("\n").colorize(:color => :red, :background=> :black)
+    puts "\n"
   end
 
 end
