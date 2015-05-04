@@ -13,7 +13,6 @@ class XUnitRunner
         parametros = instancia.parametros
         parametros.each do |hash_values|
 
-
           instancia.define_singleton_method :method_missing do |symbol, *args|
             value = hash_values[symbol]
             if value.nil?
@@ -21,7 +20,6 @@ class XUnitRunner
             end
             value
           end
-          instancia.send sym
         end
       else
         instancia.send sym
@@ -38,19 +36,28 @@ class XUnitRunner
 
   end
 
+  def method_is_test(method)
+    method.to_s.start_with? 'test_'
+  end
+
+  def method_is_paramtest(method)
+    method.to_s.start_with? 'param_test'
+  end
+
   def run_all_tests(klass)
     methods = klass.instance_methods(false)
     test_methods = methods.select do |method|
-      method.to_s.start_with? 'test_' or
-          method.to_s.start_with? 'param_test_'
+      self.method_is_test method or
+          self.method_is_paramtest method
     end
 
     resultados = test_methods.collect do |test_method|
       self.run_test(klass, test_method)
-
     end
 
-    ResultadoSuite.new resultados
+    resultado_suite = ResultadoSuite.new resultados
+    Reporter.new(resultado_suite).reportar
+    resultado_suite
   end
 
 end
@@ -154,3 +161,9 @@ class ResultadoError < Resultado
   end
 end
 
+class Reporter
+  def reportar
+
+  end
+
+end
