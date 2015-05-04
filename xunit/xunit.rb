@@ -154,26 +154,21 @@ class ResultadoFailure < Resultado
   def failure?
     true
   end
+
+  def report
+    puts "Failure on test #{self.signature}: #{self.exception.message}".colorize(:color => :light_yellow, :background => :black)
+  end
 end
 
 class ResultadoError < Resultado
   def error?
     true
   end
-end
 
-class ResultadoConsoleFailure < ResultadoFailure
   def report
-    puts "Failure on test #{self.signature}: #{self.exception.message}".colorize(:color => :light_yellow, :background=> :black)
-  end
-
-end
-
-class ResultadoConsoleError < ResultadoError
-  def report
-    puts "Error on test #{self.signature}: #{self.exception.message}".colorize(:color => :red, :background=> :black)
-    puts self.exception.backtrace.join("\n").colorize(:color => :red, :background=> :black)
+    puts "Error on test #{self.signature}: #{self.exception.message}".colorize(:color => :red, :background => :black)
+    puts self.exception.backtrace.join("\n").colorize(:color => :red, :background => :black)
     puts "\n"
   end
-
 end
+

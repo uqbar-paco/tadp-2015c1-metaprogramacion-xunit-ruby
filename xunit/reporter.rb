@@ -75,15 +75,6 @@ end
 
 class ConsoleReporter < BaseReporter
 
-  def failure(result)
-    #Se pierde identidad, pero se necesita tener una clase que entienda report en consola, ya que podemos tener subclases que puede reportar por otro flujo, o sistema.
-    self.registered_reports << ResultadoConsoleFailure.new(result.signature, result.exception)
-  end
-
-  def error(result)
-    self.registered_reports << ResultadoConsoleError.new(result.signature, result.exception)
-  end
-
   def report_assertions
     super
     puts "#{self.get_total_reports} tests,#{self.get_successful_reports.length} tests ran ok, #{self.get_failure_reports.length} failures,#{self.get_error_reports.length} errors.".
